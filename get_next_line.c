@@ -6,40 +6,27 @@
 /*   By: gde-pass <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/12/12 15:27:11 by gde-pass          #+#    #+#             */
-/*   Updated: 2018/01/23 18:38:52 by gde-pass         ###   ########.fr       */
+/*   Updated: 2018/01/22 19:33:54 by gde-pass         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "get_next_line.h"
 
-struct s_reste	*ft_find_fd(const int fd, struct s_reste *first)
+void ft_load_first_lunch(const int fd, ssize_t *ret, char **reste)
 {
-	struct s_reste	*tmp;
-
-	tmp = first;
-	while (first != NULL && first->fd != fd)
-		first = first->next;
-	if (first == NULL)
-	{
-		if (!(first = (struct s_reste*)malloc(sizeof(struct s_reste))))
-			return (NULL);
-		first->fd = fd;
-		first->reste = NULL;
-		while (tmp->next != NULL)
-			tmp = tmp->next;
-		tmp->next = first;
-	}
-	return (first);
+  *reste = malloc(sizeof(char) * (BUFF_SIZE + 1));
+  *ret = read(fd, *reste, BUFF_SIZE);
+  (*reste)[*ret] = '\0';
 }
 
-int				ft_check_bn(struct s_reste *cw, int *n)
+int				ft_check_bn(char *reste, int *n)
 {
 	int			i;
 
 	i = 0;
-	while (cw->reste[i] != '\0')
+	while (reste[i] != '\0')
 	{
-		if (cw->reste[i] == '\n')
+		if (reste[i] == '\n')
 		{
 			*n = i;
 			return (1);
@@ -49,79 +36,57 @@ int				ft_check_bn(struct s_reste *cw, int *n)
 	return (0);
 }
 
-struct s_reste	*ft_reset_reste(const int fd, struct s_reste *cw, int n)
+char	*ft_reset_reste(char *reste, int n)
 {
 	int				i;
-	struct s_reste	*newreste;
+	char	    *newreste;
 
 	i = 0;
-	if (!(newreste = (struct s_reste*)malloc(sizeof(struct s_reste))))
-		return (NULL);
-	newreste->fd = fd;
-	newreste->next = cw->next;
-	if (!(newreste->reste = (char *)malloc(sizeof(char) \
-					* (ft_strlen(cw->reste) - n))))
-		return (NULL);
-	n++;
-	while (cw->reste[n] != '\0')
+	n = n + 1;
+  newreste = malloc(sizeof(char) * (ft_strlen(reste) - n + 1));
+	while (reste[n] != '\0')
 	{
-		newreste->reste[i] = cw->reste[n];
+		newreste[i] = reste[n];
 		i++;
 		n++;
 	}
-	newreste->reste[i] = '\0';
-	cw->reste = newreste->reste;
-	free(newreste);
-	return (cw);
+	newreste[i] = '\0';
+	reste = newreste;
+  free(newreste);
+	return (reste);
 }
 
-int				get_next_line(const int fd, char **line)
+void ft_line(char ***line, int n, char *reste)
 {
-	static struct s_reste	*first = NULL;
-	struct s_reste			*cw;
-	char					buffer[BUFF_SIZE + 1];
-	int						n;
-	ssize_t					vrr;
+  **line = malloc(sizeof(char) * (n + 1));
+  **line = ft_strncpy(**line, reste, n);
+  (**line)[n] = '\0';
+}
 
-	cw = NULL;
-	ft_bzero(buffer, BUFF_SIZE + 1);
-	n = 0;
-	if (fd < 3 || BUFF_SIZE < 1 || line == NULL)
+int get_next_line(const int fd, char **line)
+{
+  static char *reste = NULL;
+  int         n;
+  char        *buffer;
+  ssize_t     ret;
+
+  buffer = ft_strnew(BUFF_SIZE + 1);
+  n = 0;
+  if (fd < 3 || BUFF_SIZE < 1 || line == NULL)
 		return (ERROR);
 
-	if (first == NULL)
-	{
-		if (!(first = (struct s_reste*)malloc(sizeof(struct s_reste))))
-			return (ERROR);
-		first->fd = fd;
-		first->reste = NULL;
-		first->next = NULL;
-	}
-	cw = ft_find_fd(fd, first);
-	if (cw->reste == NULL)
-	{
-		if (!(cw->reste = (char *)malloc(sizeof(char) * (BUFF_SIZE + 1))))
-			return (ERROR);
-		vrr = read(fd, cw->reste, BUFF_SIZE);
-		if (vrr == -1)
-			return (ERROR);
-		cw->reste[vrr] = '\0';
-	}
-	while (ft_check_bn(cw, &n) == 0)
-	{
-		ft_bzero(buffer, BUFF_SIZE);
-		vrr = read(fd, buffer, BUFF_SIZE);
-		if (vrr == -1)
-			return (ERROR);
-		else if (vrr == 0)
-			return (ENDREAD);
-		buffer[vrr] = '\0';
-		cw->reste = ft_strjoin(cw->reste, buffer);
-	}
-	if (!(*line = (char *)malloc(sizeof(char) * (n + 1))))
-		return (ERROR);
-	*line = ft_strncpy(*line, cw->reste, n);
-	(*line)[n] = '\0';
-	cw = ft_reset_reste(fd, cw, n);
-	return (READLINE);
+  if (reste == NULL)
+    ft_load_first_lunch(fd, &ret, &reste);
+
+  while (ft_check_bn(reste, &n) == 0)
+  {
+    ret = read(fd, buffer, BUFF_SIZE);
+    if (ret == 0)
+      return(ENDREAD);
+    buffer[ret] = '\0';
+    reste = ft_strjoin(reste, buffer);
+  }
+  ft_line(&line, n, reste);
+  reste = ft_reset_reste(reste, n);
+  return (READLINE);
 }
