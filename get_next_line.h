@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   get_next_line.h                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: gde-pass <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: gde-pass <gde-pass@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/12/12 15:36:02 by gde-pass          #+#    #+#             */
-/*   Updated: 2018/01/22 17:55:23 by gde-pass         ###   ########.fr       */
+/*   Updated: 2018/01/25 18:46:26 by gde-pass         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,6 +23,13 @@
 # include <fcntl.h>
 # include "libft/libft.h"
 # include <stdio.h>
+
+struct				s_reste
+{
+	int							fd;
+	char						*reste;
+	struct s_reste	*next;
+};
 
 int					get_next_line(const int fd, char **line);
 

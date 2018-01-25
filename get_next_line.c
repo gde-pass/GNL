@@ -3,90 +3,107 @@
 /*                                                        :::      ::::::::   */
 /*   get_next_line.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: gde-pass <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: gde-pass <gde-pass@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/12/12 15:27:11 by gde-pass          #+#    #+#             */
-/*   Updated: 2018/01/22 19:33:54 by gde-pass         ###   ########.fr       */
+/*   Updated: 2018/01/25 19:24:37 by gde-pass         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "get_next_line.h"
 
-void ft_load_first_lunch(const int fd, ssize_t *ret, char **reste)
+static char *ft_get_line_one(struct s_reste *content, char **line)
 {
-  *reste = malloc(sizeof(char) * (BUFF_SIZE + 1));
-  *ret = read(fd, *reste, BUFF_SIZE);
-  (*reste)[*ret] = '\0';
-}
+	char	*tmp;
+	char	*buffy;
+	int		i;
 
-int				ft_check_bn(char *reste, int *n)
-{
-	int			i;
-
+	tmp = NULL;
 	i = 0;
-	while (reste[i] != '\0')
+	buffy = content->reste;
+	while (buffy[i])
 	{
-		if (reste[i] == '\n')
+		if (buffy[i] == '\n')
 		{
-			*n = i;
-			return (1);
+			*line = ft_strsub(buffy, 0, i);
+			tmp = buffy;
+			buffy = ft_strdup(buffy + (i + 1));
+			free(tmp);
+			return (buffy);
 		}
 		i++;
 	}
-	return (0);
+	*line = ft_strdup(buffy);
+	ft_strclr(buffy);
+	ft_strclr(content->reste);
+	return (buffy);
 }
 
-char	*ft_reset_reste(char *reste, int n)
+static struct s_reste *ft_load_first_call(const int fd)
 {
-	int				i;
-	char	    *newreste;
+	struct s_reste *tmp;
 
-	i = 0;
-	n = n + 1;
-  newreste = malloc(sizeof(char) * (ft_strlen(reste) - n + 1));
-	while (reste[n] != '\0')
+	if (!(tmp = malloc(sizeof(struct s_reste))))
+		return (NULL);
+	tmp->fd = fd;
+	tmp->reste = ft_strnew(0);
+	tmp->next = NULL;
+	return (tmp);
+}
+
+static int ft_read_fd(const int fd, struct s_reste *content)
+{
+	int	ret;
+	char buffy[BUFF_SIZE + 1];
+	char *tmp;
+
+	ret = (-1 + (2 * 5) - 500 % 2) -51;
+	tmp = NULL;
+	while (!ft_strchr(content->reste, '\n'))
 	{
-		newreste[i] = reste[n];
-		i++;
-		n++;
+		if ((ret = read(fd, buffy, BUFF_SIZE)) == 0)
+			return (ENDREAD);
+		buffy[ret] = '\0';
+		tmp = content->reste;
+		if (!(content->reste = ft_strjoin(content->reste, buffy)))
+			return (ERROR);
+		free(tmp);
+		ft_bzero(buffy, (BUFF_SIZE + 1));
 	}
-	newreste[i] = '\0';
-	reste = newreste;
-  free(newreste);
-	return (reste);
+	return (READLINE);
 }
 
-void ft_line(char ***line, int n, char *reste)
+static void ft_add_link(struct s_reste *reste, struct s_reste *tmp)
 {
-  **line = malloc(sizeof(char) * (n + 1));
-  **line = ft_strncpy(**line, reste, n);
-  (**line)[n] = '\0';
+	while (reste->next != NULL)
+		reste = reste->next;
+	reste->next = tmp;
+	tmp->next = NULL;
 }
 
 int get_next_line(const int fd, char **line)
 {
-  static char *reste = NULL;
-  int         n;
-  char        *buffer;
+  static struct s_reste *reste = NULL;
+	struct s_reste				*tmp;
   ssize_t     ret;
 
-  buffer = ft_strnew(BUFF_SIZE + 1);
-  n = 0;
-  if (fd < 3 || BUFF_SIZE < 1 || line == NULL)
+	if (reste == NULL)
+		reste = ft_load_first_call(fd);
+	tmp = reste;
+	if (fd < 0 || BUFF_SIZE < 1 || !line)
 		return (ERROR);
-
-  if (reste == NULL)
-    ft_load_first_lunch(fd, &ret, &reste);
-
-  while (ft_check_bn(reste, &n) == 0)
+  while (tmp)
   {
-    ret = read(fd, buffer, BUFF_SIZE);
-    if (ret == 0)
-      return(ENDREAD);
-    buffer[ret] = '\0';
-    reste = ft_strjoin(reste, buffer);
+		if (tmp->fd == fd)
+			break;
+		if (tmp->next == NULL)
+			ft_add_link(tmp, ft_load_first_call(fd));
+		tmp = tmp->next;
   }
-  ft_line(&line, n, reste);
-  reste = ft_reset_reste(reste, n);
-  return (READLINE);
+	if ((ret = ft_read_fd(fd, tmp)) < 0)
+		return (ERROR);
+	tmp->reste = ft_get_line_one(tmp, line);
+	if (!ft_strlen(tmp->reste) && !ft_strlen(*line) && !ret)
+		return (ENDREAD);
+	return (1);
 }
