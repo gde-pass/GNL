@@ -6,7 +6,7 @@
 /*   By: gde-pass <gde-pass@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/12/12 15:27:11 by gde-pass          #+#    #+#             */
-/*   Updated: 2018/01/25 19:24:37 by gde-pass         ###   ########.fr       */
+/*   Updated: 2018/01/29 22:49:14 by gde-pass         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -87,11 +87,11 @@ int get_next_line(const int fd, char **line)
 	struct s_reste				*tmp;
   ssize_t     ret;
 
+	if (fd < 0 || BUFF_SIZE < 1 || line == NULL || read(fd, NULL, 0) == -1)
+		return (ERROR);
 	if (reste == NULL)
 		reste = ft_load_first_call(fd);
 	tmp = reste;
-	if (fd < 0 || BUFF_SIZE < 1 || !line)
-		return (ERROR);
   while (tmp)
   {
 		if (tmp->fd == fd)
@@ -105,5 +105,5 @@ int get_next_line(const int fd, char **line)
 	tmp->reste = ft_get_line_one(tmp, line);
 	if (!ft_strlen(tmp->reste) && !ft_strlen(*line) && !ret)
 		return (ENDREAD);
-	return (1);
+	return (READLINE);
 }
