@@ -6,13 +6,13 @@
 /*   By: gde-pass <gde-pass@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/12/12 15:27:11 by gde-pass          #+#    #+#             */
-/*   Updated: 2018/01/29 22:49:14 by gde-pass         ###   ########.fr       */
+/*   Updated: 2018/01/30 15:59:23 by gde-pass         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "get_next_line.h"
 
-static char *ft_get_line_one(struct s_reste *content, char **line)
+static char				*ft_get_line_one(struct s_reste *content, char **line)
 {
 	char	*tmp;
 	char	*buffy;
@@ -39,7 +39,7 @@ static char *ft_get_line_one(struct s_reste *content, char **line)
 	return (buffy);
 }
 
-static struct s_reste *ft_load_first_call(const int fd)
+static struct s_reste	*ft_load_first_call(const int fd)
 {
 	struct s_reste *tmp;
 
@@ -51,13 +51,13 @@ static struct s_reste *ft_load_first_call(const int fd)
 	return (tmp);
 }
 
-static int ft_read_fd(const int fd, struct s_reste *content)
+static int				ft_read_fd(const int fd, struct s_reste *content)
 {
-	int	ret;
-	char buffy[BUFF_SIZE + 1];
-	char *tmp;
+	int		ret;
+	char	buffy[BUFF_SIZE + 1];
+	char	*tmp;
 
-	ret = (-1 + (2 * 5) - 500 % 2) -51;
+	ret = -100;
 	tmp = NULL;
 	while (!ft_strchr(content->reste, '\n'))
 	{
@@ -73,7 +73,7 @@ static int ft_read_fd(const int fd, struct s_reste *content)
 	return (READLINE);
 }
 
-static void ft_add_link(struct s_reste *reste, struct s_reste *tmp)
+static void				ft_add_link(struct s_reste *reste, struct s_reste *tmp)
 {
 	while (reste->next != NULL)
 		reste = reste->next;
@@ -81,25 +81,25 @@ static void ft_add_link(struct s_reste *reste, struct s_reste *tmp)
 	tmp->next = NULL;
 }
 
-int get_next_line(const int fd, char **line)
+int								get_next_line(const int fd, char **line)
 {
-  static struct s_reste *reste = NULL;
+	static struct s_reste	*reste = NULL;
 	struct s_reste				*tmp;
-  ssize_t     ret;
+	ssize_t								ret;
 
 	if (fd < 0 || BUFF_SIZE < 1 || line == NULL || read(fd, NULL, 0) == -1)
 		return (ERROR);
 	if (reste == NULL)
 		reste = ft_load_first_call(fd);
 	tmp = reste;
-  while (tmp)
-  {
+	while (tmp)
+	{
 		if (tmp->fd == fd)
-			break;
+			break ;
 		if (tmp->next == NULL)
 			ft_add_link(tmp, ft_load_first_call(fd));
 		tmp = tmp->next;
-  }
+	}
 	if ((ret = ft_read_fd(fd, tmp)) < 0)
 		return (ERROR);
 	tmp->reste = ft_get_line_one(tmp, line);
