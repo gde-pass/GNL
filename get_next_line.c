@@ -6,7 +6,7 @@
 /*   By: gde-pass <gde-pass@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/12/12 15:27:11 by gde-pass          #+#    #+#             */
-/*   Updated: 2018/01/30 15:59:23 by gde-pass         ###   ########.fr       */
+/*   Updated: 2018/01/30 18:54:22 by gde-pass         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -81,11 +81,11 @@ static void				ft_add_link(struct s_reste *reste, struct s_reste *tmp)
 	tmp->next = NULL;
 }
 
-int								get_next_line(const int fd, char **line)
+int						get_next_line(const int fd, char **line)
 {
 	static struct s_reste	*reste = NULL;
-	struct s_reste				*tmp;
-	ssize_t								ret;
+	struct s_reste			*tmp;
+	ssize_t					ret;
 
 	if (fd < 0 || BUFF_SIZE < 1 || line == NULL || read(fd, NULL, 0) == -1)
 		return (ERROR);
