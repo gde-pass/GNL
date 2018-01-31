@@ -6,7 +6,7 @@
 /*   By: gde-pass <gde-pass@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/12/12 15:36:02 by gde-pass          #+#    #+#             */
-/*   Updated: 2018/01/30 18:55:39 by gde-pass         ###   ########.fr       */
+/*   Updated: 2018/01/31 13:22:25 by gde-pass         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,7 @@
 # include <unistd.h>
 # include <stdlib.h>
 # include <fcntl.h>
-# include "libft/libft.h"
+# include "libft/includes/libft.h"
 
 struct				s_reste
 {
