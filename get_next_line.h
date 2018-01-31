@@ -24,13 +24,6 @@
 # include "libft/libft.h"
 # include <stdio.h>
 
-struct				s_reste
-{
-	int				fd;
-	char			*reste;
-	struct s_reste	*next;
-};
-
 int					get_next_line(const int fd, char **line);
 
 #endif
