@@ -12,7 +12,7 @@
 
 CC = gcc
 CFLAGS = -Wall -Wextra -Werror
-HEADERS = libft.h
+HEADERS = includes/libft.h
 SRCS = ft_putchar.c \
 	   ft_strlen.c \
 	   ft_putstr.c \
@@ -97,3 +97,5 @@ fclean: clean
 	rm -rf $(NAME)
 
 re: fclean all
+
+.PHONY: all, clean, fclean, re
