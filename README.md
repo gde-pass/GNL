@@ -1,5 +1,7 @@
 # Get_Next_Line
 
+![https://img.shields.io/badge/Grade-125%2F100-green.svg](https://img.shields.io/badge/Grade-125%2F100-green.svg)
+
 ## What is Get_Next_Line ?
 Get_next_line is a 42 Project and a useful function, that basically reads a file line by line.
 
