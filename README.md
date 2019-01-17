@@ -1,8 +1,6 @@
 # Get_Next_Line
 
-[![Codacy Badge](https://api.codacy.com/project/badge/Grade/1eca252eff32495bb0333a44d9ed365b)](https://app.codacy.com/app/gde-pass/GNL?utm_source=github.com&utm_medium=referral&utm_content=gde-pass/GNL&utm_campaign=Badge_Grade_Dashboard)
-
-![https://img.shields.io/badge/Grade-125%2F100-green.svg](https://img.shields.io/badge/Grade-125%2F100-green.svg)
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/1eca252eff32495bb0333a44d9ed365b)](https://app.codacy.com/app/gde-pass/GNL?utm_source=github.com&utm_medium=referral&utm_content=gde-pass/GNL&utm_campaign=Badge_Grade_Dashboard) ![https://img.shields.io/badge/Grade-125%2F100-green.svg](https://img.shields.io/badge/Grade-125%2F100-green.svg)
 
 ## What is Get_Next_Line ?
 Get_next_line is a 42 Project and a useful function, that basically reads a file line by line.
